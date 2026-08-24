@@ -3,10 +3,23 @@
  *
  * VERIFICATION STATUS — read this before trusting anything below.
  *
- * The PATHS table is the ONLY place endpoint paths appear. It was written from
- * documentation, NOT from a live call, and is therefore UNVERIFIED. Gate 0.4 in
- * BUILD-SPEC.md exists to verify it against the sandbox with a real token. When
- * a path turns out to be wrong, fix it HERE and nowhere else.
+ * The PATHS table is the ONLY place endpoint paths appear. When a path turns out
+ * to be wrong, fix it HERE and nowhere else.
+ *
+ * VERIFICATION LEVELS — these are not the same thing:
+ *   DOC-CHECKED  the path string was read off the OpenAPI block on
+ *                docs.name.com (2026-08-24). Every entry below is doc-checked.
+ *   OBSERVED     a real request to api.dev.name.com returned something for it.
+ *                NOTHING here is observed yet. Gate 0.4 has not been run.
+ *
+ * Doc-checking on 2026-08-24 caught three paths that were WRONG:
+ *   - webhook notifications are /core/v1/notifications, not
+ *     /core/v1/webhook_notifications
+ *   - account info is /core/v1/accountinfo/balance; there is no bare
+ *     /core/v1/accountinfo endpoint in the reference
+ *   - URL forwardings LIST and DELETE do not live under the domain path that
+ *     CREATE uses; the current forms are /core/v1/urlforwarding/{domain}
+ * A doc-check is still not an observation. Gate 0.4 decides.
  *
  * Two facts that bite, both from CLAUDE.md §3:
  *   - Do NOT URL-encode the colon in `domains:checkAvailability`.
@@ -26,7 +39,8 @@ export const RATE_LIMIT_PER_HOUR = 3000;
  */
 export const PATHS = {
   hello: () => `/core/v1/hello`,
-  accountInfo: () => `/core/v1/accountinfo`,
+  // DOC-CHECKED: the reference documents only the balance sub-resource.
+  accountBalance: () => `/core/v1/accountinfo/balance`,
 
   domainsList: () => `/core/v1/domains`,
   domainGet: (d: string) => `/core/v1/domains/${encodeURIComponent(d)}`,
@@ -48,12 +62,15 @@ export const PATHS = {
   emailForwardingUpdate: (d: string, box: string) =>
     `/core/v1/domains/${encodeURIComponent(d)}/email/forwarding/${encodeURIComponent(box)}`,
 
-  urlForwardingsList: (d: string) =>
-    `/core/v1/domains/${encodeURIComponent(d)}/url/forwarding`,
+  // NOTE the asymmetry, which is easy to get wrong: CREATE hangs off the domain
+  // path, but the current LIST and DELETE live under /core/v1/urlforwarding.
+  // The domain-path forms of LIST and DELETE still exist and are DEPRECATED.
   urlForwardingCreate: (d: string) =>
     `/core/v1/domains/${encodeURIComponent(d)}/url/forwarding`,
-  urlForwardingDelete: (d: string, host: string) =>
-    `/core/v1/domains/${encodeURIComponent(d)}/url/forwarding/${encodeURIComponent(host)}`,
+  urlForwardingsList: (d: string) =>
+    `/core/v1/urlforwarding/${encodeURIComponent(d)}`,
+  urlForwardingDeleteById: (d: string, id: number) =>
+    `/core/v1/urlforwarding/${encodeURIComponent(d)}/${id}`,
 
   dnsRecordsList: (d: string) =>
     `/core/v1/domains/${encodeURIComponent(d)}/records`,
@@ -62,9 +79,10 @@ export const PATHS = {
   dnsRecordDelete: (d: string, id: number) =>
     `/core/v1/domains/${encodeURIComponent(d)}/records/${id}`,
 
-  webhookNotificationsList: () => `/core/v1/webhook_notifications`,
-  webhookNotificationCreate: () => `/core/v1/webhook_notifications`,
-  webhookNotificationDelete: (id: number) => `/core/v1/webhook_notifications/${id}`,
+  webhookNotificationsList: () => `/core/v1/notifications`,
+  webhookNotificationCreate: () => `/core/v1/notifications`,
+  webhookNotificationUpdate: (id: number) => `/core/v1/notifications/${id}`,
+  webhookNotificationDelete: (id: number) => `/core/v1/notifications/${id}`,
 } as const;
 
 // ---------------------------------------------------------------- error types
@@ -259,8 +277,8 @@ export class NamecomClient {
     return this.request<HelloResponse>("GET", PATHS.hello());
   }
 
-  accountInfo() {
-    return this.request<AccountInfo>("GET", PATHS.accountInfo());
+  accountBalance() {
+    return this.request<AccountInfo>("GET", PATHS.accountBalance());
   }
 
   getDomain(domain: string) {
@@ -332,6 +350,10 @@ export class NamecomClient {
       "GET",
       PATHS.urlForwardingsList(domain),
     );
+  }
+
+  deleteUrlForwarding(domain: string, id: number) {
+    return this.request<unknown>("DELETE", PATHS.urlForwardingDeleteById(domain, id));
   }
 
   createUrlForwarding(domain: string, host: string, forwardsTo: string) {

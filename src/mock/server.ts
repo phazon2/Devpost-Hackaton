@@ -104,7 +104,7 @@ export function createMockServer() {
     if (method === "GET" && path === "/core/v1/hello") {
       return send(res, 200, { serverName: "mock", motd: "local mock, not name.com", username: "demo-test" });
     }
-    if (method === "GET" && path === "/core/v1/accountinfo") {
+    if (method === "GET" && path === "/core/v1/accountinfo/balance") {
       return send(res, 200, { username: "demo-test", balance: "0.00" });
     }
     if (method === "POST" && path === "/core/v1/domains:checkAvailability") {
@@ -218,7 +218,7 @@ export function createMockServer() {
     }
 
     // ---- webhook notifications
-    if (path === "/core/v1/webhook_notifications") {
+    if (path === "/core/v1/notifications") {
       if (method === "GET") return send(res, 200, { webhookNotifications: webhooks });
       if (method === "POST") {
         const body = await readBody(req);

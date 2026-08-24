@@ -1,6 +1,6 @@
 {
   "header": "Records what this run observed, not what the tests claim.",
-  "ranAtUtc": "2026-08-24T08:01:31.423Z",
+  "ranAtUtc": "2026-08-24T19:39:32.954Z",
   "base": "http://127.0.0.1:8787",
   "target": "LOCAL MOCK — NOT NAME.COM",
   "gate": "0.4",
@@ -16,15 +16,15 @@
       "id": "0.4.domain.create",
       "op": "POST /core/v1/domains",
       "status": "pass",
-      "httpStatus": 200,
-      "observed": "already existed midespensa.cl expires 2027-08-24T08:01:30.952Z"
+      "httpStatus": 201,
+      "observed": "created doorman-probe-mt7n3vdr.com expires 2027-08-24T19:39:32.946Z"
     },
     {
       "id": "0.4.fwd.create",
       "op": "POST /core/v1/domains/{d}/email/forwarding",
       "status": "pass",
       "httpStatus": 201,
-      "observed": "created probe-mt6y67bm@midespensa.cl"
+      "observed": "created probe-mt7n3vdr@doorman-probe-mt7n3vdr.com"
     },
     {
       "id": "0.4.fwd.readback",
@@ -53,43 +53,37 @@
       "method": "GET",
       "path": "/core/v1/hello",
       "status": 200,
-      "ms": 111
+      "ms": 45
     },
     {
       "method": "POST",
       "path": "/core/v1/domains",
-      "status": 409,
-      "ms": 12
-    },
-    {
-      "method": "GET",
-      "path": "/core/v1/domains/midespensa.cl",
-      "status": 200,
-      "ms": 3
+      "status": 201,
+      "ms": 5
     },
     {
       "method": "POST",
-      "path": "/core/v1/domains/midespensa.cl/email/forwarding",
+      "path": "/core/v1/domains/doorman-probe-mt7n3vdr.com/email/forwarding",
       "status": 201,
-      "ms": 3
+      "ms": 1
     },
     {
       "method": "GET",
-      "path": "/core/v1/domains/midespensa.cl/email/forwarding",
+      "path": "/core/v1/domains/doorman-probe-mt7n3vdr.com/email/forwarding",
       "status": 200,
-      "ms": 2
+      "ms": 1
     },
     {
       "method": "DELETE",
-      "path": "/core/v1/domains/midespensa.cl/email/forwarding/probe-mt6y67bm",
+      "path": "/core/v1/domains/doorman-probe-mt7n3vdr.com/email/forwarding/probe-mt7n3vdr",
       "status": 200,
       "ms": 1
     },
     {
       "method": "GET",
-      "path": "/core/v1/domains/midespensa.cl/email/forwarding",
+      "path": "/core/v1/domains/doorman-probe-mt7n3vdr.com/email/forwarding",
       "status": 200,
-      "ms": 2
+      "ms": 1
     }
   ],
   "unverified": [

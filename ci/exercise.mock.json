@@ -2,7 +2,7 @@
   "header": "Records what this run observed, not what the tests claim.",
   "MOCK_DERIVED": true,
   "warning": "EVERY result in this file was produced against a LOCAL MOCK of the name.com API (src/mock/server.ts), not against name.com. The mock encodes our own assumptions, so this receipt is evidence about Doorman's own logic and about nothing else. It is NOT Gate 0.4 and can never become Gate 0.4.",
-  "ranAtUtc": "2026-08-24T16:25:57.327Z",
+  "ranAtUtc": "2026-08-24T19:39:24.959Z",
   "base": "LOCAL MOCK — NOT NAME.COM",
   "exercises": [
     "src/db.ts",
@@ -107,19 +107,19 @@
       "method": "GET",
       "path": "/core/v1/domains/midespensa.cl",
       "status": 200,
-      "ms": 20
+      "ms": 16
     },
     {
       "method": "POST",
       "path": "/core/v1/domains/midespensa.cl/email/forwarding",
       "status": 201,
-      "ms": 8
+      "ms": 6
     },
     {
       "method": "GET",
       "path": "/core/v1/domains/midespensa.cl/email/forwarding",
       "status": 200,
-      "ms": 2
+      "ms": 1
     },
     {
       "method": "DELETE",
@@ -131,13 +131,13 @@
       "method": "GET",
       "path": "/core/v1/domains/midespensa.cl/email/forwarding",
       "status": 200,
-      "ms": 2
+      "ms": 1
     },
     {
       "method": "GET",
       "path": "/core/v1/domains/midespensa.cl/email/forwarding",
       "status": 200,
-      "ms": 2
+      "ms": 1
     },
     {
       "method": "GET",
@@ -149,15 +149,15 @@
       "method": "GET",
       "path": "/core/v1/domains/midespensa.cl",
       "status": 200,
-      "ms": 1
-    },
-    {
-      "method": "POST",
-      "path": "/core/v1/domains/midespensa.cl/email/forwarding",
-      "status": 201,
       "ms": 2
     },
     {
+      "method": "POST",
+      "path": "/core/v1/domains/midespensa.cl/email/forwarding",
+      "status": 201,
+      "ms": 1
+    },
+    {
       "method": "GET",
       "path": "/core/v1/domains/midespensa.cl/email/forwarding",
       "status": 200,
@@ -191,7 +191,7 @@
       "method": "GET",
       "path": "/core/v1/domains/midespensa.cl",
       "status": 200,
-      "ms": 1
+      "ms": 0
     },
     {
       "method": "POST",
@@ -215,13 +215,13 @@
       "method": "GET",
       "path": "/core/v1/domains/midespensa.cl/email/forwarding",
       "status": 429,
-      "ms": 1
+      "ms": 0
     },
     {
       "method": "GET",
       "path": "/core/v1/domains/midespensa.cl/email/forwarding",
       "status": 200,
-      "ms": 1
+      "ms": 2
     },
     {
       "method": "GET",
