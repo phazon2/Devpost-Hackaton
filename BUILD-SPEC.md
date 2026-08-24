@@ -32,11 +32,17 @@ of real calendar time, whatever the slot numbering says.
 
 **~30–45 min · laptop · one batched session.**
 
-Nothing below this line starts until all five are resolved. Each can invalidate the plan and each is cheap.
+> **Pick the environment before you start.** Gate 0.4 is a live API call, so a session in an
+> environment whose egress proxy denies `api.dev.name.com` cannot execute it — it fails at CONNECT,
+> before authentication, and no token will help. `ci/env-probe.json` records which environment was
+> observed to reach it. **An environment is bound at session start and cannot be changed mid-session.**
+
+Nothing below this line starts until all six are resolved. Each can invalidate the plan and each is cheap.
 **This is the ninety-second rule applied to the whole project.**
 
 | # | Check | Pass condition | If it fails |
 |---|---|---|---|
+| **0.0** | **Environment egress.** The session must be able to reach `api.dev.name.com`. Verified by `ci/env-probe.json`. | The **Claude Hackaton** environment (`env_01KaWH4orkyiCeSe5RnQkao1`) reached it: **401 unauthenticated, `recentRelayFailures: []`**. Devpost, Railway and SerpApi also reachable. | The **default ("Predeterminado") environment blocks it** — observed `403` at CONNECT for every name.com host. **Gate 0.4 cannot run there at all.** Start the session in *Claude Hackaton*; an environment cannot be swapped mid-session. |
 | **0.1** | Register on Devpost and **open the actual submission form**. | You have *seen* the form and confirmed there is a selectable **name.com Domain API Challenge** checkbox, and you know every required field. | If the challenge cannot be selected, **email the organisers immediately**. Missing this means you are not judged at all. |
 | **0.2** | Create a **throwaway** name.com account with **2FA disabled**. Settings → Security → API Tokens → Create API Token. | You hold **both** a production token and a test token. Both are in `.env`, which is **already gitignored**. | No workaround. **Blocking.** |
 | **0.3** | **Prize form.** Email `daisy.edwards@identity.digital`: *"Is the $1,500 / $500 prize a transferable Amazon gift card, or name.com account credit?"* | Answer received, **or** sent and awaiting. | Account credit is near-worthless to a Chilean solo dev. **If credit, reconsider the whole track before day 2.** |
