@@ -1,0 +1,99 @@
+{
+  "header": "Records what this run observed, not what the tests claim.",
+  "ranAtUtc": "2026-08-24T08:01:31.423Z",
+  "base": "http://127.0.0.1:8787",
+  "target": "LOCAL MOCK — NOT NAME.COM",
+  "gate": "0.4",
+  "checks": [
+    {
+      "id": "0.4.hello",
+      "op": "GET /core/v1/hello",
+      "status": "pass",
+      "httpStatus": 200,
+      "observed": "serverName=mock"
+    },
+    {
+      "id": "0.4.domain.create",
+      "op": "POST /core/v1/domains",
+      "status": "pass",
+      "httpStatus": 200,
+      "observed": "already existed midespensa.cl expires 2027-08-24T08:01:30.952Z"
+    },
+    {
+      "id": "0.4.fwd.create",
+      "op": "POST /core/v1/domains/{d}/email/forwarding",
+      "status": "pass",
+      "httpStatus": 201,
+      "observed": "created probe-mt6y67bm@midespensa.cl"
+    },
+    {
+      "id": "0.4.fwd.readback",
+      "op": "GET /core/v1/domains/{d}/email/forwarding",
+      "status": "pass",
+      "httpStatus": 200,
+      "observed": "present in list (1 total)"
+    },
+    {
+      "id": "0.4.fwd.delete",
+      "op": "DELETE /core/v1/domains/{d}/email/forwarding/{box}",
+      "status": "pass",
+      "httpStatus": 200,
+      "observed": "delete accepted"
+    },
+    {
+      "id": "0.4.fwd.readback2",
+      "op": "GET /core/v1/domains/{d}/email/forwarding (absence)",
+      "status": "pass",
+      "httpStatus": 200,
+      "observed": "absent from list after delete"
+    }
+  ],
+  "requestLog": [
+    {
+      "method": "GET",
+      "path": "/core/v1/hello",
+      "status": 200,
+      "ms": 111
+    },
+    {
+      "method": "POST",
+      "path": "/core/v1/domains",
+      "status": 409,
+      "ms": 12
+    },
+    {
+      "method": "GET",
+      "path": "/core/v1/domains/midespensa.cl",
+      "status": 200,
+      "ms": 3
+    },
+    {
+      "method": "POST",
+      "path": "/core/v1/domains/midespensa.cl/email/forwarding",
+      "status": 201,
+      "ms": 3
+    },
+    {
+      "method": "GET",
+      "path": "/core/v1/domains/midespensa.cl/email/forwarding",
+      "status": 200,
+      "ms": 2
+    },
+    {
+      "method": "DELETE",
+      "path": "/core/v1/domains/midespensa.cl/email/forwarding/probe-mt6y67bm",
+      "status": 200,
+      "ms": 1
+    },
+    {
+      "method": "GET",
+      "path": "/core/v1/domains/midespensa.cl/email/forwarding",
+      "status": 200,
+      "ms": 2
+    }
+  ],
+  "unverified": [
+    "Every check above ran against a LOCAL MOCK, not name.com. This receipt proves the probe harness runs; it proves nothing about the name.com API.",
+    "Endpoint paths in src/namecom.ts PATHS are written from documentation. Only the paths exercised above and marked pass have been observed to exist."
+  ]
+}
