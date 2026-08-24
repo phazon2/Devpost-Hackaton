@@ -5,6 +5,26 @@ conversation, no carried-over state, and nothing in your context that is not in 
 
 ---
 
+## 0a. Companion repo — execution rules live in a second repository
+
+**`https://github.com/phazon2/hack-template`** carries Diego's cross-project execution rules in its
+`CLAUDE.md`. **Read it at the start of every session, before doing anything**, and treat it as binding.
+It is public; clone it read-only:
+
+```
+GIT_LFS_SKIP_SMUDGE=1 git clone --depth 1 https://github.com/phazon2/hack-template \
+  /home/user/phazon2/hack-template
+```
+
+**It is a source of rules, never a destination and never a source of files.**
+All code, commits and pushes go to **`phazon2/Devpost-Hackaton`** on the designated branch.
+Never copy its files into this repo, never commit its contents here, never push to it.
+
+Where the two disagree, `hack-template/CLAUDE.md` wins on *how to work* (environment, evidence, credentials,
+blockers, deploy); this file wins on *what Doorman is* (product, rubric, API facts, scope).
+
+---
+
 ## 0. The situation
 
 Building **Doorman** for the **DevNetwork [API + Cloud + AI] Hackathon 2026** on Devpost, targeting the
@@ -241,8 +261,15 @@ Chosen to minimise toolchain time, not to be impressive. **Change it only for a 
 - **SQLite via `better-sqlite3`** — `suppliers`, `identities`, `events`
 - **Server-rendered HTML + a little vanilla JS.** No React, no build step, no CSS framework install.
   A build step you have to debug at 1am is a day you don't have.
-- Deploy to **Railway or Fly.io** (persistent disk for SQLite, one command).
+- Deploy to **Railway or Fly.io** (persistent disk for SQLite).
   A **public URL is required** for the name.com webhook receiver.
+
+> **Do not conclude a public URL is impossible because the container cannot reach the provider's API.**
+> Git-triggered deploy needs **zero container egress**: push to GitHub → the provider watches the repo →
+> it builds on its own infra → public URL. That URL is also the webhook receiver. The chain runs entirely
+> outside this container. The only human step is connecting the repo to the provider **once**, in a browser.
+> This mistake has already been made once in this project — a blocked `api.railway.app` was misread as
+> "deployment is impossible from here."
 
 Layout:
 
