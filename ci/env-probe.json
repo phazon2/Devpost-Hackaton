@@ -1,0 +1,28 @@
+{
+  "header": "Records what this run observed, not what the tests claim.",
+  "environment": "Claude Hackaton",
+  "ranAtUtc": "2026-08-24T08:00:39Z",
+  "method": "curl -s -o /dev/null -w '%{http_code}' -m 12 <url>. No authentication header was supplied on any request, so 401 means the host was reached and answered.",
+  "results": [
+    { "url": "https://api.dev.name.com/core/v1/hello", "httpStatus": 401, "curlExitCode": 0, "reachable": true, "note": "name.com CORE API sandbox. 401 = reached, unauthenticated as expected." },
+    { "url": "https://api.name.com/core/v1/hello", "httpStatus": 401, "curlExitCode": 0, "reachable": true, "note": "name.com CORE API production. 401 = reached, unauthenticated as expected." },
+    { "url": "https://docs.name.com/api/v1/overview", "httpStatus": 200, "curlExitCode": 0, "reachable": true },
+    { "url": "https://www.name.com", "httpStatus": 200, "curlExitCode": 0, "reachable": true },
+    { "url": "https://devpost.com", "httpStatus": 200, "curlExitCode": 0, "reachable": true },
+    { "url": "https://api.railway.app", "httpStatus": 200, "curlExitCode": 0, "reachable": true },
+    { "url": "https://api.machines.dev", "httpStatus": 301, "curlExitCode": 0, "reachable": true, "note": "Redirect not followed (-L not used)." },
+    { "url": "https://serpapi.com", "httpStatus": 200, "curlExitCode": 0, "reachable": true },
+    { "url": "https://registry.npmjs.org", "httpStatus": 200, "curlExitCode": 0, "reachable": true, "note": "Listed in proxy noProxy set; reached directly." }
+  ],
+  "proxy": {
+    "statusEndpointReachable": true,
+    "enabled": true,
+    "selective": false,
+    "noProxy": "localhost,127.0.0.1,::1,127.0.0.0/8,0.0.0.0/8,::,169.254.0.0/16,api.anthropic.com,api-staging.anthropic.com,api-pr-preview.anthropic.com,mcp-proxy.anthropic.com,mcp-proxy-staging.anthropic.com,registry.npmjs.org,jsr.io,npm.jsr.io,pypi.org,files.pythonhosted.org,index.crates.io,proxy.golang.org,host.docker.internal,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,100.64.0.0/10,.svc.cluster.local,*.svc.cluster.local",
+    "recentRelayFailures": []
+  },
+  "notObserved": [
+    "No authenticated call was made against either name.com base URL, so this probe says nothing about whether a token works.",
+    "No write operation of any kind was attempted."
+  ]
+}
