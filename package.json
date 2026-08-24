@@ -4,7 +4,9 @@
   "private": true,
   "description": "Your suppliers don't have a company domain. So give them one of yours.",
   "type": "module",
-  "engines": { "node": ">=20" },
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "start": "tsx src/server.ts",
@@ -12,7 +14,8 @@
     "probe": "tsx scripts/probe.ts",
     "probe:mock": "DOORMAN_ALLOW_MOCK_PROBE=1 NAMECOM_BASE=http://127.0.0.1:8787 NAMECOM_USER=demo-test NAMECOM_TOKEN=mock-token tsx scripts/probe.ts",
     "edge-cases": "tsx scripts/edge-cases.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "exercise:mock": "tsx scripts/exercise-mock.ts"
   },
   "dependencies": {
     "hono": "^4.6.14",

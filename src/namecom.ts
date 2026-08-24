@@ -43,6 +43,10 @@ export const PATHS = {
     `/core/v1/domains/${encodeURIComponent(d)}/email/forwarding/${encodeURIComponent(box)}`,
   emailForwardingDelete: (d: string, box: string) =>
     `/core/v1/domains/${encodeURIComponent(d)}/email/forwarding/${encodeURIComponent(box)}`,
+  // Edge case 2: the alias stays, the destination moves. UNVERIFIED like the
+  // rest of this table — the method may be PUT or PATCH; Gate 0.4 decides.
+  emailForwardingUpdate: (d: string, box: string) =>
+    `/core/v1/domains/${encodeURIComponent(d)}/email/forwarding/${encodeURIComponent(box)}`,
 
   urlForwardingsList: (d: string) =>
     `/core/v1/domains/${encodeURIComponent(d)}/url/forwarding`,
@@ -301,6 +305,18 @@ export class NamecomClient {
       "POST",
       PATHS.emailForwardingCreate(domain),
       { emailBox, emailTo },
+    );
+  }
+
+  /**
+   * Repoints an existing alias. The emailBox is NOT sent in the body: the alias
+   * is the identity and must not be renameable by this call.
+   */
+  updateEmailForwarding(domain: string, emailBox: string, emailTo: string) {
+    return this.request<EmailForwarding>(
+      "PUT",
+      PATHS.emailForwardingUpdate(domain, emailBox),
+      { emailTo },
     );
   }
 

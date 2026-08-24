@@ -1,0 +1,239 @@
+{
+  "header": "Records what this run observed, not what the tests claim.",
+  "MOCK_DERIVED": true,
+  "warning": "EVERY result in this file was produced against a LOCAL MOCK of the name.com API (src/mock/server.ts), not against name.com. The mock encodes our own assumptions, so this receipt is evidence about Doorman's own logic and about nothing else. It is NOT Gate 0.4 and can never become Gate 0.4.",
+  "ranAtUtc": "2026-08-24T16:25:57.327Z",
+  "base": "LOCAL MOCK — NOT NAME.COM",
+  "exercises": [
+    "src/db.ts",
+    "src/identity.ts",
+    "CLAUDE.md §6 refusals 1-3"
+  ],
+  "cases": [
+    {
+      "id": "spine.mint",
+      "what": "mint(): create forwarding, then LIST and confirm present",
+      "expected": "identity live, alias derived from the trade name, read-back confirms presence",
+      "observed": "lacteos-riquelme@midespensa.cl -> riquelme.lacteos@gmail.com; read-back present=true destinationMatches=true",
+      "status": "pass"
+    },
+    {
+      "id": "spine.mint.event",
+      "what": "every mutation writes an events row",
+      "expected": "an identity.mint event carrying the API method, path and status",
+      "observed": "1 event(s); mint recorded POST /core/v1/domains/midespensa.cl/email/forwarding -> 201",
+      "status": "pass"
+    },
+    {
+      "id": "spine.revoke",
+      "what": "revoke(): delete forwarding, then LIST and confirm absent",
+      "expected": "identity revoked only after the API list no longer contains it",
+      "observed": "lacteos-riquelme@midespensa.cl status=revoked revokedAt=set; absent from API list",
+      "status": "pass"
+    },
+    {
+      "id": "spine.readback.negative-control",
+      "what": "mint() against an API that CLAIMS 201 but did not create the forwarding",
+      "expected": "ReadBackFailure — the 201 is not believed, nothing is recorded as live",
+      "observed": "ReadBackFailure raised, 0 rows written, failure recorded in events",
+      "status": "pass"
+    },
+    {
+      "id": "refusal.1.reserved-alias",
+      "what": "REFUSAL 1 — minting `admin@` on the anchor domain",
+      "expected": "Refusal(reserved-alias) with a plain sentence for the screen",
+      "observed": "refused: \"`admin@` is reserved for the domain itself. Pick another alias — we won't rename it for you.\"",
+      "status": "pass"
+    },
+    {
+      "id": "refusal.2.anchor-expires-first",
+      "what": "REFUSAL 2 — a 365-day identity on a domain that expires in 12 days",
+      "expected": "Refusal(anchor-expires-first) with a plain sentence for the screen",
+      "observed": "refused: \"We won't issue this identity: the domain it lives on expires before the identity is meant to.\"",
+      "status": "pass"
+    },
+    {
+      "id": "refusal.3.trade-name-tax-id-conflict",
+      "what": "REFUSAL 3 — same trade name, different tax ID",
+      "expected": "Refusal(trade-name-tax-id-conflict) with a plain sentence for the screen",
+      "observed": "refused: \"Two suppliers, same trade name, different tax ID. We won't merge them. Confirm which one this is.\"",
+      "status": "pass"
+    },
+    {
+      "id": "refusal.3.confirmed",
+      "what": "the same conflict, once the buyer confirms they are different companies",
+      "expected": "supplier created — Doorman proposes, the human decides",
+      "observed": "supplier 5 created with taxId ending 77-6",
+      "status": "pass"
+    },
+    {
+      "id": "refusal.events",
+      "what": "each refusal is recorded in events, not swallowed",
+      "expected": "one refusal.* event per refusal raised above",
+      "observed": "3 refusal event(s): refusal.trade-name-tax-id-conflict, refusal.anchor-expires-first, refusal.reserved-alias",
+      "status": "pass"
+    },
+    {
+      "id": "refusal.2.boundary",
+      "what": "REFUSAL 2 — exactly where the refusal starts and stops",
+      "expected": "a 90-day identity is refused at 89 days to expiry and allowed at 91",
+      "observed": "refused at 89d to expiry, allowed at 91d; the boundary is the identity's own end date",
+      "status": "pass"
+    },
+    {
+      "id": "edge.1.alias-collision",
+      "what": "two suppliers, same trade name, both minted",
+      "expected": "second alias suffixed with the tax ID; the first is never overwritten",
+      "observed": "el-molino@midespensa.cl and el-molino-76222222@midespensa.cl both live (suffixed=true)",
+      "status": "pass"
+    },
+    {
+      "id": "edge.2.destination-change",
+      "what": "supplier changes the inbox they read",
+      "expected": "alias unchanged, destination updated, read-back confirms the new destination",
+      "observed": "frutas-del-valle@midespensa.cl unchanged; destination now valle.nuevo@gmail.com (confirmed by read-back)",
+      "status": "pass"
+    },
+    {
+      "id": "db.events.invariant",
+      "what": "no mutation without an events row",
+      "expected": "suppliers + identity mints + revokes + destination changes all represented",
+      "observed": "19 events total: identity.alias.collision=1 identity.destination.update=1 identity.mint.readback_failed=1 identity.mint=4 identity.revoke=1 refusal.anchor-expires-first=1 refusal.reserved-alias=1 refusal.trade-name-tax-id-conflict=1 supplier.create=8",
+      "status": "pass"
+    }
+  ],
+  "requestLog": [
+    {
+      "method": "GET",
+      "path": "/core/v1/domains/midespensa.cl",
+      "status": 200,
+      "ms": 20
+    },
+    {
+      "method": "POST",
+      "path": "/core/v1/domains/midespensa.cl/email/forwarding",
+      "status": 201,
+      "ms": 8
+    },
+    {
+      "method": "GET",
+      "path": "/core/v1/domains/midespensa.cl/email/forwarding",
+      "status": 200,
+      "ms": 2
+    },
+    {
+      "method": "DELETE",
+      "path": "/core/v1/domains/midespensa.cl/email/forwarding/lacteos-riquelme",
+      "status": 200,
+      "ms": 1
+    },
+    {
+      "method": "GET",
+      "path": "/core/v1/domains/midespensa.cl/email/forwarding",
+      "status": 200,
+      "ms": 2
+    },
+    {
+      "method": "GET",
+      "path": "/core/v1/domains/midespensa.cl/email/forwarding",
+      "status": 200,
+      "ms": 2
+    },
+    {
+      "method": "GET",
+      "path": "/core/v1/domains/caducando.cl",
+      "status": 200,
+      "ms": 2
+    },
+    {
+      "method": "GET",
+      "path": "/core/v1/domains/midespensa.cl",
+      "status": 200,
+      "ms": 1
+    },
+    {
+      "method": "POST",
+      "path": "/core/v1/domains/midespensa.cl/email/forwarding",
+      "status": 201,
+      "ms": 2
+    },
+    {
+      "method": "GET",
+      "path": "/core/v1/domains/midespensa.cl/email/forwarding",
+      "status": 200,
+      "ms": 1
+    },
+    {
+      "method": "GET",
+      "path": "/core/v1/domains/midespensa.cl",
+      "status": 200,
+      "ms": 1
+    },
+    {
+      "method": "POST",
+      "path": "/core/v1/domains/midespensa.cl/email/forwarding",
+      "status": 201,
+      "ms": 1
+    },
+    {
+      "method": "GET",
+      "path": "/core/v1/domains/midespensa.cl/email/forwarding",
+      "status": 200,
+      "ms": 1
+    },
+    {
+      "method": "GET",
+      "path": "/core/v1/domains/midespensa.cl/email/forwarding",
+      "status": 200,
+      "ms": 1
+    },
+    {
+      "method": "GET",
+      "path": "/core/v1/domains/midespensa.cl",
+      "status": 200,
+      "ms": 1
+    },
+    {
+      "method": "POST",
+      "path": "/core/v1/domains/midespensa.cl/email/forwarding",
+      "status": 201,
+      "ms": 1
+    },
+    {
+      "method": "GET",
+      "path": "/core/v1/domains/midespensa.cl/email/forwarding",
+      "status": 200,
+      "ms": 1
+    },
+    {
+      "method": "PUT",
+      "path": "/core/v1/domains/midespensa.cl/email/forwarding/frutas-del-valle",
+      "status": 200,
+      "ms": 1
+    },
+    {
+      "method": "GET",
+      "path": "/core/v1/domains/midespensa.cl/email/forwarding",
+      "status": 429,
+      "ms": 1
+    },
+    {
+      "method": "GET",
+      "path": "/core/v1/domains/midespensa.cl/email/forwarding",
+      "status": 200,
+      "ms": 1
+    },
+    {
+      "method": "GET",
+      "path": "/core/v1/domains/midespensa.cl/email/forwarding",
+      "status": 200,
+      "ms": 1
+    }
+  ],
+  "unverified": [
+    "Nothing here says an email forwarding can actually be created on api.dev.name.com. Gate 0.4 has NOT been run: no name.com token exists in this environment.",
+    "Endpoint paths in src/namecom.ts PATHS remain UNVERIFIED against the real API.",
+    "Mail delivery itself is not exercised: the mock cannot deliver or bounce a message. The 'arrives -> revoke -> bounces' acceptance test requires the sandbox and a real inbox.",
+    "The response SHAPES the read-backs depend on (emailForwarding[].emailBox / .emailTo) are assumptions of the mock. If name.com names them differently, every read-back here is wrong."
+  ]
+}
