@@ -109,6 +109,20 @@ steps**, every call against the live sandbox.
 > no bounce can be produced. See CLAUDE.md §1. The read-back is real, filmable, and shows the API as the
 > source of truth — which is the thing the rubric actually scores.
 
+> **OPEN — the read-back is more rigorous than the bounce and less vivid.** A GET returning JSON before
+> and after is correct and visually inert. Rigor is not the weak axis here; memorability is. The fix is
+> craft applied to the evidence, not a return to the bounce. Four requirements for the shot:
+>
+> 1. **The query text is on screen and identical in both halves**, so its sameness is *provable* rather
+>    than asserted. If the viewer has to take our word that it was the same call, the shot has failed.
+> 2. **The alias is the single changing element.** Everything else in the frame holds still.
+> 3. **Before and after occupy one frame**, side by side — not two moments the viewer must hold in
+>    memory and compare.
+> 4. **Legible in three seconds with no narration.**
+>
+> Unresolved. Do not record beat 3 until this is designed. It is the difference between a judge
+> remembering Doorman and a judge agreeing Doorman is correct.
+
 **Also on day 1 — lock these and never revisit:**
 
 - The **name** (`Doorman`) and the **pitch sentence**. Renaming later cascades into repo URL, deploy URL,
