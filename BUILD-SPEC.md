@@ -88,6 +88,8 @@ mark 0.1/0.3 as *awaiting reply* in the session report. Never mark them passed.
 
 **Build the eight seconds first. Everything else is decoration on it.**
 
+The eight seconds is **mint → live read-back → revoke → live read-back**, not a mail bounce.
+
 **Deliver:**
 
 - `src/namecom.ts` — thin **typed** client. Real error types for `429` and `4xx`. **No retries yet.**
@@ -98,8 +100,14 @@ mark 0.1/0.3 as *awaiting reply* in the session report. Never mark them passed.
 - Minimal **server-rendered** page: supplier list, "Add supplier" form, "Revoke" button.
 - **Deployed to a public URL.**
 
-**Acceptance:** on the **deployed** app — add a supplier → mail to the alias **arrives** at the destination
-inbox → click Revoke → mail to the same alias **bounces**. End to end, **no local-only steps**.
+**Acceptance:** on the **deployed** app — add a supplier → the alias appears in a **live
+`GET /core/v1/domains/{d}/email/forwarding`** rendered on screen → click Revoke → **the same query, run
+again, no longer contains it**. The registrar answers, not our database. End to end, **no local-only
+steps**, every call against the live sandbox.
+
+> **Not "mail arrives → bounces".** The sandbox never publishes DNS, so mail cannot route to an alias and
+> no bounce can be produced. See CLAUDE.md §1. The read-back is real, filmable, and shows the API as the
+> source of truth — which is the thing the rubric actually scores.
 
 **Also on day 1 — lock these and never revisit:**
 
@@ -119,7 +127,10 @@ inbox → click Revoke → mail to the same alias **bounces**. End to end, **no 
 - **URL Forwardings** — a short sayable address per supplier → their public card page.
   Print it on the mock delivery slip used in the video.
 - **DNS Records** — publish the binding: `alias ↔ legal entity name ↔ tax ID (RUT) ↔ trade name`.
-  Make it **resolvable** and show `dig` returning it in the video.
+  **Do not promise `dig`.** Sandbox stores DNS records but never publishes them, so no public resolver
+  will ever return this. Show the record coming back from
+  **`GET /core/v1/domains/{d}/records`** instead, and say in the README that sandbox DNS is
+  non-resolvable by design.
 - **Webhook Notifications** — register a receiver at `src/webhooks.ts`. Handle **domain expiry** and
   **transfer** events. Every issued identity dies if the anchor domain dies — **that connection must be
   visible in the UI, not just logged.**
@@ -147,7 +158,7 @@ integration depth **without reading code**.
 |---|---|---|
 | 1 | Two suppliers share a trade name | Collision resolved by **tax-ID-suffixed alias**. **Never silently overwrite.** |
 | 2 | Supplier changes their personal inbox | **Alias unchanged, destination updated.** Nothing already printed becomes wrong. *This is the point of the design — say so, on screen and in the README.* |
-| 3 | Supplier fired mid-week | Alias deleted; **the bounce is the proof**. Event row records who revoked and when. |
+| 3 | Supplier fired mid-week | Alias deleted; **the registrar's own list no longer returning it is the proof**. Event row records who revoked and when. |
 | 4 | Alias minted while the anchor domain is near expiry | **Refuse.** The identity would outlive its foundation. **State why.** |
 | 5 | Reserved-address collision (`admin@`, `postmaster@`, `abuse@`) | **Refuse, do not mangle.** |
 | 6 | Rate limit — 20 req/sec, 3,000/hr | Batch onboarding with **backoff**. **Demonstrate it working on a batch of 30**, don't just claim it. |
@@ -191,7 +202,8 @@ README structure, in this order:
 2. **The pitch sentence, bold, first line of text** — verbatim
 3. **The problem in one paragraph** — with a **real number** for BEC losses, **verified with a citation at
    the moment you write it** (not from memory)
-4. **The eight-second demo, as a GIF** — arrives → revoke → bounces
+4. **The eight-second demo, as a GIF** — alias present in the live API read-back → revoke → same query,
+   alias gone
 5. **Integration depth table** — six endpoint groups → six product behaviours → six endpoint paths
 6. **Edge cases table**, linking to `ci/edge-cases.json`
 7. **Architecture** — how an identity is minted, read back, and revoked
@@ -209,8 +221,8 @@ README structure, in this order:
 |---|---|---|
 | 1. Hook | 0:00–0:15 | **One named supplier, one fake invoice, one specific dollar amount.** Not "a user" and "some data." |
 | 2. Setup | 0:15–0:40 | Onboarding a supplier is creating one forwarding. **Don't linger.** |
-| 3. **THE WOW** | 0:40–1:30 | Mail arrives → revoke → mail **bounces**. Longest beat. **Schedule two full seconds of silence at the bounce.** Most demo videos never stop talking. |
-| 4. Depth + refusal | 1:30–2:20 | `dig` returning the DNS binding; the expiry refusal **stating why**; the batch hitting the rate limit and backing off. |
+| 3. **THE WOW** | 0:40–1:30 | The alias in a live `GET .../email/forwarding` → revoke → **the identical query returns without it**. Longest beat. **Schedule two full seconds of silence on the second read-back.** Most demo videos never stop talking. Say once, plainly: *this is name.com answering, not our database.* |
+| 4. Depth + refusal | 1:30–2:20 | The DNS binding read back from `GET .../records`; the expiry refusal **stating why**; the batch hitting the rate limit and backing off. |
 | 5. Close | 2:20–2:40 | **Pitch sentence repeated verbatim**, live URL on screen. |
 
 Target **2–4 minutes** per the sponsor requirement.
@@ -252,8 +264,8 @@ beats cinematics. What is polished is **the writing**.
    the README** rather than silently absent.
 4. **The public supplier card page** — URL forwarding can point at a static page.
 
-**Never cut:** the **mint → revoke → bounce spine**, the **three refusals**, the **integration-depth table**,
-or **the video**.
+**Never cut:** the **mint → read-back → revoke → read-back spine**, the **three refusals**, the
+**integration-depth table**, or **the video**.
 
 ---
 
@@ -291,8 +303,10 @@ Check each and answer with evidence, not opinion:
    claim.
 
 4. THE SPINE. Can a judge, from a logged-out browser and the README alone,
-   reproduce: mail arrives -> revoke -> mail bounces? What is the first step
-   that would stop them?
+   reproduce: alias present in a live API read-back -> revoke -> same query,
+   alias absent? What is the first step that would stop them? Separately: does
+   the repo anywhere claim or imply mail delivery, arrival, or bouncing? That
+   would be a false claim -- sandbox cannot route mail. Flag every instance.
 
 5. SETUP. Clone the repo mentally from scratch with only the README. Name the
    first command that fails or the first undeclared prerequisite.

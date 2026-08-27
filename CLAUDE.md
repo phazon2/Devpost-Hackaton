@@ -90,10 +90,28 @@ The rule a new person at the receiving door learns in ten seconds:
 ### The demo moment — eight seconds, no narration
 
 Onboarding a supplier is creating a forwarding. Firing a supplier is deleting one.
-**Send a message to the alias → it arrives. Click revoke. Send again → it bounces.**
 
-Revocation today is a note in a WhatsApp group. Here it is a DNS operation with a receipt.
-**Everything else in the build exists to make that eight seconds credible.**
+**Mint the identity → ask name.com for its forwardings, the alias is there. Click revoke → ask name.com
+the same question again, the alias is gone.**
+
+The proof is that the answer comes from the registrar, not from our database. Same query, before and
+after, on screen. Revocation today is a note in a WhatsApp group. Here it is a registrar operation with
+a receipt. **Everything else in the build exists to make that eight seconds credible.**
+
+> **Why this and not "mail arrives → bounces".** That was the original centerpiece and it cannot be
+> filmed. name.com's sandbox stores DNS but never publishes it, so the MX records that would route mail
+> to an alias never become public and no message can arrive or bounce. This was discovered on
+> 2026-08-24, from the sandbox's own documented constraints, *after* the demo had been specified around
+> it — the same error class as the endpoint paths that were written from memory: a capability assumed
+> rather than probed. See §5, "Verify what you intend to film."
+>
+> The sponsor never asked for mail delivery. The rubric asks for integration depth, edge-case handling,
+> and a walkthrough demonstrating the integration in action. The read-back demo shows all three and is
+> **entirely real** — every call in it hits the live sandbox. Nothing is simulated, and nothing is faked
+> for the camera.
+>
+> **The caveat ships in the README, not in the pitch:** mail delivery is not demonstrated, and the repo
+> says so plainly.
 
 ---
 
@@ -185,6 +203,13 @@ These come from four logged post-mortems of real hackathon runs. Each one cost s
   breath as the claim.
 - **Every write needs a read-back the writer does not control.** After creating a forwarding, *list*
   forwardings from the API and confirm it is there. **Do not trust the 201.**
+- **Verify what you intend to film, not just what the API can do.** "Can the API create an email
+  forwarding" and "can I film mail arriving at that address, in the environment I actually have" are
+  different questions, and only the second one is the demo. Probe the *artefact you plan to show* on day
+  0, in the environment you will really use. This rule exists because the eight-second centerpiece was
+  specified around mail arriving and bouncing, and the sandbox turned out never to publish DNS — the
+  demo was impossible from the first day and nobody asked until day 3. **Ask of every planned shot: what
+  environment does this run in, and has anything actually produced this output there yet?**
 
 ### Scope and time
 

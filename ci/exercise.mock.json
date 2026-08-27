@@ -2,7 +2,7 @@
   "header": "Records what this run observed, not what the tests claim.",
   "MOCK_DERIVED": true,
   "warning": "EVERY result in this file was produced against a LOCAL MOCK of the name.com API (src/mock/server.ts), not against name.com. The mock encodes our own assumptions, so this receipt is evidence about Doorman's own logic and about nothing else. It is NOT Gate 0.4 and can never become Gate 0.4.",
-  "ranAtUtc": "2026-08-24T19:39:24.959Z",
+  "ranAtUtc": "2026-08-27T16:16:25.906Z",
   "base": "LOCAL MOCK — NOT NAME.COM",
   "exercises": [
     "src/db.ts",
@@ -107,25 +107,25 @@
       "method": "GET",
       "path": "/core/v1/domains/midespensa.cl",
       "status": 200,
-      "ms": 16
+      "ms": 19
     },
     {
       "method": "POST",
       "path": "/core/v1/domains/midespensa.cl/email/forwarding",
       "status": 201,
-      "ms": 6
+      "ms": 9
     },
     {
       "method": "GET",
       "path": "/core/v1/domains/midespensa.cl/email/forwarding",
       "status": 200,
-      "ms": 1
+      "ms": 2
     },
     {
       "method": "DELETE",
       "path": "/core/v1/domains/midespensa.cl/email/forwarding/lacteos-riquelme",
       "status": 200,
-      "ms": 1
+      "ms": 2
     },
     {
       "method": "GET",
@@ -149,7 +149,7 @@
       "method": "GET",
       "path": "/core/v1/domains/midespensa.cl",
       "status": 200,
-      "ms": 2
+      "ms": 1
     },
     {
       "method": "POST",
@@ -190,20 +190,20 @@
     {
       "method": "GET",
       "path": "/core/v1/domains/midespensa.cl",
+      "status": 200,
+      "ms": 1
+    },
+    {
+      "method": "POST",
+      "path": "/core/v1/domains/midespensa.cl/email/forwarding",
+      "status": 201,
+      "ms": 1
+    },
+    {
+      "method": "GET",
+      "path": "/core/v1/domains/midespensa.cl/email/forwarding",
       "status": 200,
       "ms": 0
-    },
-    {
-      "method": "POST",
-      "path": "/core/v1/domains/midespensa.cl/email/forwarding",
-      "status": 201,
-      "ms": 1
-    },
-    {
-      "method": "GET",
-      "path": "/core/v1/domains/midespensa.cl/email/forwarding",
-      "status": 200,
-      "ms": 1
     },
     {
       "method": "PUT",
@@ -215,13 +215,13 @@
       "method": "GET",
       "path": "/core/v1/domains/midespensa.cl/email/forwarding",
       "status": 429,
-      "ms": 0
+      "ms": 1
     },
     {
       "method": "GET",
       "path": "/core/v1/domains/midespensa.cl/email/forwarding",
       "status": 200,
-      "ms": 2
+      "ms": 5
     },
     {
       "method": "GET",
@@ -233,7 +233,7 @@
   "unverified": [
     "Nothing here says an email forwarding can actually be created on api.dev.name.com. Gate 0.4 has NOT been run: no name.com token exists in this environment.",
     "Endpoint paths in src/namecom.ts PATHS remain UNVERIFIED against the real API.",
-    "Mail delivery itself is not exercised: the mock cannot deliver or bounce a message. The 'arrives -> revoke -> bounces' acceptance test requires the sandbox and a real inbox.",
+    "Mail delivery is not exercised here and is not exercisable anywhere in this project: name.com's sandbox stores DNS but never publishes it, so the MX records that would route mail to an alias never become public. No message can arrive at an alias and none can bounce. The spine is therefore proven by the API read-back (mint -> list -> revoke -> list), which is real against the sandbox, and NOT by mail delivery. Doorman must never claim otherwise.",
     "The response SHAPES the read-backs depend on (emailForwarding[].emailBox / .emailTo) are assumptions of the mock. If name.com names them differently, every read-back here is wrong."
   ]
 }

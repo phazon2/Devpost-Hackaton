@@ -360,8 +360,11 @@ async function main(): Promise<void> {
       "Nothing here says an email forwarding can actually be created on api.dev.name.com. " +
         "Gate 0.4 has NOT been run: no name.com token exists in this environment.",
       "Endpoint paths in src/namecom.ts PATHS remain UNVERIFIED against the real API.",
-      "Mail delivery itself is not exercised: the mock cannot deliver or bounce a message. " +
-        "The 'arrives -> revoke -> bounces' acceptance test requires the sandbox and a real inbox.",
+      "Mail delivery is not exercised here and is not exercisable anywhere in this project: " +
+        "name.com's sandbox stores DNS but never publishes it, so the MX records that would route " +
+        "mail to an alias never become public. No message can arrive at an alias and none can bounce. " +
+        "The spine is therefore proven by the API read-back (mint -> list -> revoke -> list), which " +
+        "is real against the sandbox, and NOT by mail delivery. Doorman must never claim otherwise.",
       "The response SHAPES the read-backs depend on (emailForwarding[].emailBox / .emailTo) are " +
         "assumptions of the mock. If name.com names them differently, every read-back here is wrong.",
     ],
